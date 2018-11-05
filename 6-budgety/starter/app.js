@@ -1,6 +1,5 @@
 // BUDGETT CONTROLLER
 var budgetController = (function () {
-
     var Expense = function (id, description, value) {
         this.id = id;
         this.description = description;
@@ -38,9 +37,9 @@ var budgetController = (function () {
         addItem: function (type, des, val) {
             var newItem, ID;
 
-            //[1 2 3 4 5], next ID = 6
-            //[1 2 4 6 8], next ID = 9
-            // ID = last ID + 1
+            // [1 2 3 4 5], next ID = 6
+            // [1 2 4 6 8], next ID = 9
+            //  ID = last ID + 1
 
             // Create new ID
             if (data.allItems[type].length > 0) {
@@ -78,7 +77,6 @@ var budgetController = (function () {
         },
 
         calculateBudget: function () {
-
             // calculate total income and expenses
             calculateTotal('exp');
             calculateTotal('inc');
@@ -92,7 +90,6 @@ var budgetController = (function () {
             } else {
                 data.percentage = -1;
             }
-
         },
 
         getBudget: function () {
@@ -109,12 +106,10 @@ var budgetController = (function () {
             console.log(data);
         }
     };
-
 })();
 
 // UI CONTROLLER
 var UIController = (function () {
-
     var DOMstrings = {
         inputType: '.add__type',
         inputDescription: '.add__description',
@@ -155,23 +150,26 @@ var UIController = (function () {
             newHtml = newHtml.replace('%description%', obj.description);
             newHtml = newHtml.replace('%value%', obj.value);
 
-
             // Insert the HTML into the DOM
             document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
         },
 
-        clearFields: function () {
+        deleteListItem: function (selectorID) {
+            var el = document.getElementById(selectorID);
+            document.getElementById(selectorID).parentNode.removeChild(el);
+        },
 
+        clearFields: function () {
+            var fields, fieldsArr;
             fields = document.querySelectorAll(DOMstrings.inputDescription + ', ' + DOMstrings.inputValue);
 
             fieldsArr = Array.prototype.slice.call(fields);
 
             fieldsArr.forEach(function (current, index, array) {
-                current.value = "";
+                current.value = '';
             });
 
             fieldsArr[0].focus();
-
         },
 
         getDOMstrings: function () {
@@ -188,14 +186,12 @@ var UIController = (function () {
             } else {
                 document.querySelector(DOMstrings.percentageLabel).textContent = '----';
             }
-        },
+        }
     };
-
 })();
 
 // GLOBAL APP CONTROLLER
 var controller = (function (budgetCtrl, UICtrl) {
-
     var setupEventListerners = function () {
         var DOM = UIController.getDOMstrings();
 
@@ -211,7 +207,6 @@ var controller = (function (budgetCtrl, UICtrl) {
     };
 
     var updateBudget = function () {
-
         // 1. Calculate the budget
         budgetController.calculateBudget();
 
@@ -222,15 +217,13 @@ var controller = (function (budgetCtrl, UICtrl) {
         UICtrl.displayBudget(budget);
     };
 
-
     var ctrlAddItem = function () {
         var input, newItem;
 
         // 1. Get the field input data
         input = UICtrl.getInput();
 
-        if (input.description !== "" && !isNaN(input.value) && input.value > 0) {
-
+        if (input.description !== '' && !isNaN(input.value) && input.value > 0) {
             // 2. Add the item to the budget controller
             newItem = budgetCtrl.addItem(input.type, input.description, input.value);
 
@@ -243,7 +236,6 @@ var controller = (function (budgetCtrl, UICtrl) {
             // 5. Calculate and update budget
             updateBudget();
         }
-
     };
 
     var ctrlDeleteItem = function (event) {
@@ -252,8 +244,7 @@ var controller = (function (budgetCtrl, UICtrl) {
         itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
 
         if (itemID) {
-
-            //inc-1
+            // inc-1
             splitID = itemID.split('-');
             type = splitID[0];
             ID = parseInt(splitID[1]);
@@ -265,7 +256,6 @@ var controller = (function (budgetCtrl, UICtrl) {
 
             // 3. Update and show the new budget
         }
-
     };
 
     return {
@@ -280,7 +270,6 @@ var controller = (function (budgetCtrl, UICtrl) {
             setupEventListerners();
         }
     };
-
 })(budgetController, UIController);
 
 controller.init();
