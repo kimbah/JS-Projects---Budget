@@ -170,6 +170,12 @@ var UIController = (function () {
         return (type === 'exp' ? '-' : '+') + ' ' + int + '.' + dec;
     };
 
+    var nodeListForEach = function (list, callback) {
+        for (var i = 0; i < list.length; i++) {
+            callback(list[i], i);
+        }
+    };
+
     return {
         getInput: function () {
             return {
@@ -235,12 +241,6 @@ var UIController = (function () {
         displayPercentages: function (percentages) {
             var fields = document.querySelectorAll(DOMstrings.epensesPercLabel);
 
-            var nodeListForEach = function (list, callback) {
-                for (var i = 0; i < list.length; i++) {
-                    callback(list[i], i);
-                }
-            };
-
             nodeListForEach(fields, function (current, index) {
                 if (percentages[index] > 0) {
                     current.textContent = percentages[index] + '%';
@@ -257,6 +257,19 @@ var UIController = (function () {
             months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
             year = now.getFullYear();
             document.querySelector(DOMstrings.dataLabel).textContent = months[month] + ' ' + year;
+        },
+
+        changedType: function () {
+            var fields = document.querySelectorAll(
+                DOMstrings.inputType + ',' +
+                DOMstrings.inputDescription + ',' +
+                DOMstrings.inputValue);
+
+            nodeListForEach(fields, function (cur) {
+                cur.classList.toggle('red-focus');
+            });
+
+            document.querySelector(DOMstrings.inputBtn).classList.toggle('red');
         },
 
         getDOMstrings: function () {
@@ -279,6 +292,8 @@ var controller = (function (budgetCtrl, UICtrl) {
         });
 
         document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);
+
+        document.querySelector(DOM.inputType).addEventListener('change', UIController.changedType);
     };
 
     var updateBudget = function () {
